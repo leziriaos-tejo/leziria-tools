@@ -1,0 +1,36 @@
+name: Build Leziria Tools DEB
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install build tools
+      run: |
+        sudo apt update
+        sudo apt install -y dpkg-dev debhelper build-essential
+
+    - name: Prepare DEBIAN directory
+      run: |
+        mkdir -p build/leziria-tools
+        cp -r src/* build/leziria-tools/
+        cp -r DEBIAN build/leziria-tools/
+
+    - name: Build DEB package
+      run: |
+        dpkg-deb --build build/leziria-tools leziria-tools.deb
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: leziria-tools
+        path: leziria-tools.deb

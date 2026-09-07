@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Lezíria OS Tools
+Comment=Ferramentas oficiais do sistema Lezíria OS
+Exec=/usr/bin/leziria-tools
+Icon=leziria-tools
+Terminal=false
+Type=Application
+Categories=System;Utility;

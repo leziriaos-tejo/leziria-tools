@@ -1,0 +1,3 @@
+#!/bin/bash
+chmod +x /usr/bin/leziria-tools
+update-desktop-database /usr/share/applications || true

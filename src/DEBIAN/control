@@ -1,0 +1,8 @@
+Package: leziria-tools
+Version: 1.0-1
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Pedro Hugo Ferreira Nogueira
+Description: Ferramentas oficiais do sistema Lezíria OS
+Depends: python3, python3-pyqt6

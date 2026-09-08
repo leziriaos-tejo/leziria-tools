@@ -1,0 +1,62 @@
+name: Publish DEB to Leziria OS APT Repo
+
+on:
+  workflow_run:
+    workflows: ["Build Leziria Tools DEB"]
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout tools repo
+      uses: actions/checkout@v4
+
+    - name: Download built DEB artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: leziria-tools-deb
+
+    - name: Clone APT repository
+      run: |
+        git clone https://github.com/leziriaos-tejo/leziriaos-repo.git aptrepo
+        cd aptrepo
+
+    - name: Import GPG private key
+      run: |
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - name: Copy DEB into pool
+      run: |
+        mkdir -p aptrepo/pool/main/l/leziria-tools
+        cp *.deb aptrepo/pool/main/l/leziria-tools/
+
+    - name: Generate Packages
+      run: |
+        cd aptrepo
+        dpkg-scanpackages pool /dev/null > dists/tejo/main/binary-amd64/Packages
+        gzip -k dists/tejo/main/binary-amd64/Packages
+
+    - name: Generate Release files
+      run: |
+        cd aptrepo
+        apt-ftparchive release dists/tejo > dists/tejo/Release
+        gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" -abs -o dists/tejo/Release.gpg dists/tejo/Release
+        gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --clearsign -o dists/tejo/InRelease dists/tejo/Release
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+    - name: Push updated APT repo
+      run: |
+        cd aptrepo
+        git config user.name "Leziria OS Repo Publisher"
+        git config user.email "repo@leziriaos.pt"
+        git add .
+        git commit -m "Update APT repo with new DEB"
+        git push https://$TOKEN@github.com/leziriaos-tejo/leziriaos-repo.git
+      env:
+        TOKEN: ${{ secrets.REPO_TOKEN }}

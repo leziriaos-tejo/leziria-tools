@@ -1,0 +1,61 @@
+name: Publish DEB to Leziria OS APT Repo
+
+on:
+  workflow_run:
+    workflows: ["Build Leziria Tools DEB"]
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: leziria-tools
+        path: repo/pool/main
+
+    - name: Install tools
+      run: |
+        sudo apt update
+        sudo apt install -y dpkg-dev gnupg
+
+    - name: Generate Packages.gz
+      run: |
+        cd repo
+        dpkg-scanpackages --multiversion pool/main > Packages
+        gzip -k -f Packages
+
+    - name: Sign Release file
+      run: |
+        cd repo
+        echo "Origin: Leziria OS" > Release
+        echo "Label: Leziria OS" >> Release
+        echo "Suite: stable" >> Release
+        echo "Codename: tejo" >> Release
+        echo "Architectures: amd64" >> Release
+        echo "Components: main" >> Release
+        echo "Description: Leziria OS APT Repository" >> Release
+        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -abs -o Release.gpg Release
+        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --clearsign -o InRelease Release
+
+    - name: Publish to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: repo
+
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+    - name: Deploy
+      uses: actions/deploy-pages@v4

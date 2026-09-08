@@ -7,3 +7,4 @@
 # trigger full pipeline
 # trigger full pipeline
 # trigger clean pipeline
+# trigger pipeline

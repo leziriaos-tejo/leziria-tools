@@ -29,8 +29,11 @@ jobs:
       run: |
         dpkg-deb --build build/leziria-tools leziria-tools.deb
 
+        - name: List workspace files
+      run: ls -R .
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: leziria-tools
-        path: leziria-tools.deb
+        path: ./leziria-tools.deb

@@ -26,8 +26,7 @@ jobs:
         cp -r DEBIAN build/leziria-tools/
 
     - name: Build DEB package
-      run: |
-      dpkg-deb --build build/leziria-tools leziria-tools.deb
+      run: dpkg-deb --build build/leziria-tools leziria-tools.deb
 
     - name: List workspace files
       run: ls -R .
@@ -36,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: leziria-tools
-        path: ./leziria-tools.deb
+        path: leziria-tools.deb

@@ -4,3 +4,4 @@
 # trigger build
 # trigger publish
 # trigger full pipeline
+# trigger full pipeline

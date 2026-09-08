@@ -29,7 +29,7 @@ jobs:
       run: |
         dpkg-deb --build build/leziria-tools leziria-tools.deb
 
-        - name: List workspace files
+           - name: List workspace files
       run: ls -R .
 
     - name: Upload artifact

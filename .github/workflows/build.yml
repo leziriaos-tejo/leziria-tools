@@ -39,7 +39,6 @@ jobs:
         name: leziria-tools
         path: leziria-tools.deb
 
-
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -64,39 +63,16 @@ jobs:
         sudo apt update
         sudo apt install -y dpkg-dev gnupg
 
-    - name: Import GPG key
-      run: |
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --yes --import
-        echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --batch --yes --import
-
     - name: Generate Packages.gz
       run: |
         cd repo
         dpkg-scanpackages --multiversion pool/main > Packages
         gzip -k -f Packages
 
-    - name: Generate Release files
-      run: |
-        cd repo
-        echo "Origin: Leziria OS" > Release
-        echo "Label: Leziria OS" >> Release
-        echo "Suite: stable" >> Release
-        echo "Codename: tejo" >> Release
-        echo "Architectures: amd64" >> Release
-        echo "Components: main" >> Release
-        echo "Description: Leziria OS APT Repository" >> Release
-
-    - name: Sign Release
-      run: |
-        cd repo
-        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -abs -o Release.gpg Release
-        gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --clearsign -o InRelease Release
-
-    - name: Upload to GitHub Pages
+     - name: Upload to GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
         path: repo
-
 
   deploy:
     needs: publish

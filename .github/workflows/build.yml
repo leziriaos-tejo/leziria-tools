@@ -12,6 +12,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Fix apt cache
+      run: |
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
+        sudo apt-get update
+        
     - name: Install build tools
       run: |
         sudo apt update

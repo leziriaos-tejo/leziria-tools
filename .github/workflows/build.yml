@@ -57,7 +57,7 @@ jobs:
     - name: Copy public key to Pages
       run: |
         mkdir -p repo/keys
-        cp public.key repo/keys/
+        cp keys/public.key repo/keys/
 
     - name: Install tools
       run: |

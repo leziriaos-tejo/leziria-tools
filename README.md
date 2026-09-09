@@ -10,3 +10,4 @@
 # trigger pipeline
 # trigger final gpg fix
 # trigger final gpg fix 2
+# trigger pages enabled

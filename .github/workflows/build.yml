@@ -39,6 +39,11 @@ jobs:
         path: leziria-tools.deb
 
   publish:
+  - name: Copy public key to Pages
+     run: |
+       mkdir -p dist/keys
+       cp public.key dist/keys/
+
     needs: build
     runs-on: ubuntu-latest
 

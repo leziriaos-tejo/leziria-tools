@@ -11,3 +11,4 @@
 # trigger final gpg fix
 # trigger final gpg fix 2
 # trigger pages enabled
+# trigger pages fix

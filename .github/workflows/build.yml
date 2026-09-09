@@ -38,16 +38,11 @@ jobs:
         name: leziria-tools
         path: leziria-tools.deb
 
-  publish:
-  - name: Copy public key to Pages
-     run: |
-       mkdir -p dist/keys
-       cp public.key dist/keys/
+publish:
+  needs: build
+  runs-on: ubuntu-latest
 
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
+  steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -56,6 +51,11 @@ jobs:
       with:
         name: leziria-tools
         path: repo/pool/main
+
+    - name: Copy public key to Pages
+      run: |
+        mkdir -p repo/keys
+        cp public.key repo/keys/
 
     - name: Install tools
       run: |
